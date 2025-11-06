@@ -120,6 +120,41 @@ Example: `import Header from '@/components/Header'`
 **`GET /api/notifications`**
 - Legacy endpoint that returns `{ "count": 3 }` (kept for backwards compatibility)
 
+## MCP Tools
+
+### Notification Tools
+
+**MCP Notification Server** (`/mcp-notification`)
+- A Model Context Protocol (MCP) stdio server for sending notifications to the application
+- Located in `/mcp-notification/index.ts`
+- Exposes one tool: `sendNotification`
+
+**Tool: `sendNotification`**
+- **Purpose**: Send notifications to the running Doka application
+- **Parameters**:
+  - `title` (string, required): Notification title
+  - `text` (string, required): Notification text content
+  - `icon` (string, optional): Lucide icon name (e.g., "bell", "info", "alert-circle"). Defaults to "bell"
+- **Behavior**: Sends HTTP POST request to `/api/notifications` (localhost:3000 by default)
+- **Configuration**: Endpoint can be customized via `NOTIFICATION_ENDPOINT` environment variable
+- **Response**: Returns success status and echoes the sent notification details
+
+**Usage with Claude Desktop**:
+Add to Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+```json
+{
+  "mcpServers": {
+    "doka-notifications": {
+      "command": "node",
+      "args": ["/Users/rstropek/live/2025-11-06-doka/doka-ai-demo/mcp-notification/index.ts"],
+      "env": {
+        "NODE_OPTIONS": "--loader ts-node/esm"
+      }
+    }
+  }
+}
+```
+
 ## Key Design Decisions
 
 1. **No Tailwind**: Explicitly uses vanilla CSS/CSS Modules. Do not introduce Tailwind classes.

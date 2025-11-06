@@ -1,0 +1,13 @@
+{
+	"servers": {
+		"notification-server": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"tsx",
+				"/Users/rstropek/live/2025-11-06-doka/doka-ai-demo/mcp-notification/index.ts"
+			]
+		}
+	},
+	"inputs": []
+}
