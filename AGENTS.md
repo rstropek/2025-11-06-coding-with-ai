@@ -73,9 +73,11 @@ src/
 - `NotificationContext`: React Context API for managing notifications across the application
   - Provides `unreadCount` state and `setUnreadCount` function
   - Provides `notifications` array to store received notification objects
-  - Provides `addNotification` function to add new notifications
+  - Provides `addNotification` function to add new notifications (automatically generates unique IDs)
+  - Provides `removeNotification(id: string)` function to dismiss notifications
   - Listens to SSE endpoint `/api/notifications/stream` for live updates
   - Wrapped around the entire app in root layout
+  - Each notification includes a unique `id` for internal handling (auto-generated from timestamp and random string)
 
 **Container Pattern**:
 
@@ -119,6 +121,18 @@ Example: `import Header from '@/components/Header'`
 
 **`GET /api/notifications`**
 - Legacy endpoint that returns `{ "count": 3 }` (kept for backwards compatibility)
+
+### Notification Dismissal
+
+**Client-Side Dismissal Logic**:
+- Users can dismiss individual notifications by clicking the trash icon in the notification popup
+- Dismissal is purely client-side and in-memory (no backend call)
+- When a notification is dismissed:
+  - A fade-out animation (300ms) is triggered
+  - The notification is removed from the local state
+  - The unread count badge decreases accordingly
+- If all notifications are dismissed, the popup shows "No notifications." and the badge disappears
+- Each notification has a unique `id` (auto-generated) used for tracking and removal
 
 ## Key Design Decisions
 
