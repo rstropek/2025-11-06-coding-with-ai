@@ -1,0 +1,35 @@
+.breadcrumb {
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  width: 100%;
+}
+
+.breadcrumbContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+
+.breadcrumbItem {
+  display: inline-block;
+  font-size: 0.875rem;
+}
+
+.breadcrumbItem a {
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumbItem a:hover {
+  color: #005AAA;
+}
+
+.breadcrumbItem span {
+  color: #333;
+}
+
+.separator {
+  margin: 0 0.5rem;
+  color: #999;
+}
