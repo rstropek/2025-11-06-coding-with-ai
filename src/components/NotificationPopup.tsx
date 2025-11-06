@@ -1,4 +1,6 @@
+import { useState, useEffect, useRef } from 'react';
 import * as LucideIcons from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useNotifications } from '@/contexts/NotificationContext';
 import styles from './NotificationPopup.module.css';
 
@@ -8,7 +10,36 @@ interface NotificationPopupProps {
 }
 
 export default function NotificationPopup({ isOpen, onClose }: NotificationPopupProps) {
-  const { notifications } = useNotifications();
+  const { notifications, removeNotification } = useNotifications();
+  const [dismissingIds, setDismissingIds] = useState<Set<string>>(new Set());
+  const timeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    const timeouts = timeoutsRef.current;
+    return () => {
+      timeouts.forEach((timeout) => clearTimeout(timeout));
+      timeouts.clear();
+    };
+  }, []);
+
+  const handleDismiss = (id: string) => {
+    // Add to dismissing set for fade-out animation
+    setDismissingIds((prev) => new Set(prev).add(id));
+    
+    // Remove after animation completes (300ms)
+    const timeoutId = setTimeout(() => {
+      removeNotification(id);
+      setDismissingIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
+      timeoutsRef.current.delete(id);
+    }, 300);
+    
+    timeoutsRef.current.set(id, timeoutId);
+  };
 
   if (!isOpen) return null;
 
@@ -33,11 +64,14 @@ export default function NotificationPopup({ isOpen, onClose }: NotificationPopup
         </div>
         <div className={styles.content}>
           {notifications.length === 0 ? (
-            <p className={styles.emptyMessage}>Sie haben noch keine Benachrichtigungen</p>
+            <p className={styles.emptyMessage}>Keine Benachrichtigungen.</p>
           ) : (
             <ul className={styles.notificationList}>
-              {notifications.map((notification, index) => (
-                <li key={index} className={styles.notificationItem}>
+              {notifications.map((notification) => (
+                <li 
+                  key={notification.id} 
+                  className={`${styles.notificationItem} ${dismissingIds.has(notification.id) ? styles.dismissing : ''}`}
+                >
                   <div className={styles.iconContainer}>
                     {getIcon(notification.icon)}
                   </div>
@@ -45,6 +79,13 @@ export default function NotificationPopup({ isOpen, onClose }: NotificationPopup
                     <strong className={styles.notificationTitle}>{notification.title}</strong>
                     <p className={styles.notificationText}>{notification.text}</p>
                   </div>
+                  <button
+                    className={styles.dismissButton}
+                    onClick={() => handleDismiss(notification.id)}
+                    aria-label="Benachrichtigung schließen"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </li>
               ))}
             </ul>
