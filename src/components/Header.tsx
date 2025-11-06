@@ -15,8 +15,6 @@ export default function Header() {
             <Link href="/projekte">Projekte</Link>
           </nav>
         </div>
-        <div className={styles.rightSection}>
-        </div>
       </div>
     </header>
   );
