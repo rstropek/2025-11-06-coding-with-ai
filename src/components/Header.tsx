@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import NotificationBell from './NotificationBell';
 import styles from './Header.module.css';
 
 export default function Header() {
@@ -14,6 +17,9 @@ export default function Header() {
             <Link href="/schalung">Schalung & Gerüst</Link>
             <Link href="/projekte">Projekte</Link>
           </nav>
+        </div>
+        <div className={styles.rightSection}>
+          <NotificationBell />
         </div>
       </div>
     </header>

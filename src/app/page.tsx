@@ -58,6 +58,11 @@ export default function Home() {
               category="Systemkomponenten"
               description="Unsere hochwertigen Verbundplatten sind speziell für die Anwendung in Doka-Schalungssystemen konzipiert."
             />
+            <Card
+              title="Moderne Lösungen für Betondecken"
+              category="Systemkomponenten"
+              description="Entdecken Sie unsere innovativen Lösungen für die Schalung von Betondecken."
+            />
           </div>
         </section>
       </main>

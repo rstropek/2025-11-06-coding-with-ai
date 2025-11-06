@@ -38,8 +38,10 @@ src/
 │   ├── page.tsx           # Homepage
 │   ├── globals.css        # Global styles
 │   └── page.module.css    # Page-specific styles
-└── components/            # Reusable React components
-    └── ...
+├── components/            # Reusable React components
+│   └── ...
+└── contexts/              # React Context providers
+    └── NotificationContext.tsx
 ```
 
 ### Styling Architecture
@@ -59,10 +61,21 @@ src/
 
 - `Header`: Yellow top bar with logo, vertical separator, navigation menu (left-aligned), and notification bell (right-aligned)
 - `Breadcrumb`: Navigation breadcrumbs with consistent left-alignment to header logo
+- `NotificationBell`: Bell icon with notification badge, displays in header right section
+- `NotificationPopup`: Dropdown popup for notification details
 
 **Content Components**:
 
 - `Card`: Reusable product card with category label, title, description, primary CTA button, and secondary action links
+
+**State Management**:
+
+- `NotificationContext`: React Context API for managing notifications across the application
+  - Provides `unreadCount` state and `setUnreadCount` function
+  - Provides `notifications` array to store received notification objects
+  - Provides `addNotification` function to add new notifications
+  - Listens to SSE endpoint `/api/notifications/stream` for live updates
+  - Wrapped around the entire app in root layout
 
 **Container Pattern**:
 
@@ -85,8 +98,32 @@ The project uses TypeScript path aliases configured in `tsconfig.json`:
 
 Example: `import Header from '@/components/Header'`
 
+## API Endpoints
+
+### Notification API
+
+**`GET /api/notifications/stream`**
+- Server-Sent Events (SSE) endpoint for real-time notification streaming
+- Keeps connection open and broadcasts events to all connected clients
+- Event format: `data: {"title": "...", "text": "...", "icon": "..."}\n\n`
+- Icon names should be in kebab-case (e.g., "check-circle", "server") matching Lucide icon names
+- Notifications are in-memory only (not persisted)
+- Connection automatically cleaned up on client disconnect
+
+**`POST /api/notifications`**
+- Accepts notification objects and broadcasts to all connected SSE clients
+- Request body: `{ "title": string, "text": string, "icon": string }`
+- All fields are required
+- Returns `{ "success": true }` on success
+- No authentication required (intentionally left out at this stage)
+
+**`GET /api/notifications`**
+- Legacy endpoint that returns `{ "count": 3 }` (kept for backwards compatibility)
+
 ## Key Design Decisions
 
 1. **No Tailwind**: Explicitly uses vanilla CSS/CSS Modules. Do not introduce Tailwind classes.
 2. **Consistent Alignment**: All content containers use 1200px max-width and are horizontally centered.
 3. **Component Modularity**: Each component is self-contained with its own styles and TypeScript types.
+4. **No Persistence**: Notifications are stored in-memory only. Clients only receive notifications while connected.
+5. **No Authentication**: POST /api/notifications is publicly accessible for simplicity (can be added later).
