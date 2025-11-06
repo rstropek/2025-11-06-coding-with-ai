@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { useNotifications } from '@/contexts/NotificationContext';
@@ -12,20 +12,33 @@ interface NotificationPopupProps {
 export default function NotificationPopup({ isOpen, onClose }: NotificationPopupProps) {
   const { notifications, removeNotification } = useNotifications();
   const [dismissingIds, setDismissingIds] = useState<Set<string>>(new Set());
+  const timeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    const timeouts = timeoutsRef.current;
+    return () => {
+      timeouts.forEach((timeout) => clearTimeout(timeout));
+      timeouts.clear();
+    };
+  }, []);
 
   const handleDismiss = (id: string) => {
     // Add to dismissing set for fade-out animation
     setDismissingIds((prev) => new Set(prev).add(id));
     
     // Remove after animation completes (300ms)
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       removeNotification(id);
       setDismissingIds((prev) => {
         const newSet = new Set(prev);
         newSet.delete(id);
         return newSet;
       });
+      timeoutsRef.current.delete(id);
     }, 300);
+    
+    timeoutsRef.current.set(id, timeoutId);
   };
 
   if (!isOpen) return null;

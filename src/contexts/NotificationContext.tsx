@@ -26,7 +26,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const addNotification = (notification: Omit<Notification, 'id'>) => {
     const newNotification = {
       ...notification,
-      id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      id: crypto.randomUUID(),
     };
     setNotifications((prev) => [...prev, newNotification]);
     setUnreadCount((prev) => prev + 1);
