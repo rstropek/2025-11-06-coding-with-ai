@@ -51,7 +51,7 @@ export default function NotificationPopup({ isOpen, onClose }: NotificationPopup
         </div>
         <div className={styles.content}>
           {notifications.length === 0 ? (
-            <p className={styles.emptyMessage}>No notifications.</p>
+            <p className={styles.emptyMessage}>Keine Benachrichtigungen.</p>
           ) : (
             <ul className={styles.notificationList}>
               {notifications.map((notification) => (

@@ -131,8 +131,9 @@ Example: `import Header from '@/components/Header'`
   - A fade-out animation (300ms) is triggered
   - The notification is removed from the local state
   - The unread count badge decreases accordingly
-- If all notifications are dismissed, the popup shows "No notifications." and the badge disappears
+- If all notifications are dismissed, the popup shows "Keine Benachrichtigungen." and the badge disappears
 - Each notification has a unique `id` (auto-generated) used for tracking and removal
+- UI text is in German for consistency with the rest of the application
 
 ## Key Design Decisions
 
